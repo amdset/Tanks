@@ -101,15 +101,9 @@ var Tank = class {
         }
     }
 
-    createTank() {
-        if (this.isPlayer) {
-            this.point.TankDirection = TankDirection.UP;
-        }
-        this.drawTank();
-    }
-
-    moveTank(TankDirection) {
-        this.point.TankDirection = TankDirection;
+    moveTank(point) {
+        this.point = point;
+        this.lstTankBlocks = this.createTankBlocks();
         this.drawTank();
     }
 
@@ -193,8 +187,7 @@ if (canvas) {
 function StartGame() {//Agregar timer para saber si ya pasó un tiempo dado y entonces cambiar de posición
     this.ctx.clearRect(0, 0, canvas.width, canvas.height);
     initialPoint.TankDirection = tankDirection;
-    playerTank = new Tank(ctx, false, initialPoint);
-    playerTank.createTank();
+    playerTank.moveTank(initialPoint);
 
     if (upPressed) {
 
