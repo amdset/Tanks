@@ -72,18 +72,30 @@ var Tank = class {
         switch (this.point.TankDirection) {
             case TankDirection.UP:
                 remove = (col == 0 && row == 0) || (col == 2 && row == 0);
+                if (remove == false && this.isPlayer == false) {
+                    remove = (col == 1 && row == 2);
+                }
                 break;
 
             case TankDirection.DOWN:
                 remove = (col == 0 && row == 2) || (col == 2 && row == 2);
+                if (remove == false && this.isPlayer == false) {
+                    remove = (col == 1 && row == 0);
+                }
                 break;
 
             case TankDirection.LEFT:
                 remove = (col == 0 && row == 0) || (col == 0 && row == 2);
+                if (remove == false && this.isPlayer == false) {
+                    remove = (col == 2 && row == 1);
+                }
                 break;
 
             case TankDirection.RIGHT:
                 remove = (col == 2 && row == 0) || (col == 2 && row == 2);
+                if (remove == false && this.isPlayer == false) {
+                    remove = (col == 0 && row == 1);
+                }
                 break;
         }
         return remove;
@@ -166,7 +178,7 @@ if (canvas) {
             if (tankDirection != TankDirection.DOWN) {
                 tankDirection = TankDirection.DOWN;
             } else {
-                if (initialPoint.y + move <= canvas.height-(move * 3)) {// down wall
+                if (initialPoint.y + move <= canvas.height - (move * 3)) {// down wall
                     initialPoint.y += move;
                 }
             }
