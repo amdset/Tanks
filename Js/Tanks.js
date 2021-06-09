@@ -151,7 +151,11 @@ if (canvas) {
             if (tankDirection != TankDirection.UP) {
                 tankDirection = TankDirection.UP;
             } else {
-                initialPoint.y -= move;
+                if (initialPoint.y - move < 0) {//Top wall
+                    initialPoint.y = 0;
+                } else {
+                    initialPoint.y -= move;
+                }
             }
         }
         else if (e.key == "Right" || e.key == "ArrowRight") {
@@ -159,21 +163,27 @@ if (canvas) {
             if (tankDirection != TankDirection.RIGHT) {
                 tankDirection = TankDirection.RIGHT;
             } else {//Ya está en posición de avanzar
-                initialPoint.x += move;
+                if (initialPoint.x + move <= canvas.width - (move * 3)) { //Right wall
+                    initialPoint.x += move;
+                }
             }
         } else if (e.key == "Down" || e.key == "ArrowDown") {
             downPressed = true;
             if (tankDirection != TankDirection.DOWN) {
                 tankDirection = TankDirection.DOWN;
             } else {
-                initialPoint.y += move;
+                if (initialPoint.y + move <= canvas.height-(move * 3)) {// down wall
+                    initialPoint.y += move;
+                }
             }
         } else if (e.key == "Left" || e.key == "ArrowLeft") {
             leftPressed = true;
             if (tankDirection != TankDirection.LEFT) {
                 tankDirection = TankDirection.LEFT;
             } else {
-                initialPoint.x -= move;
+                if (initialPoint.x - move >= 0) {//left wall
+                    initialPoint.x -= move;
+                }
             }
         }
     }
