@@ -1,24 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tanks</title>
-    <style>
-        *{
-            padding: 0;
-            margin: 0;
-        }
-        canvas{
-            background: rgb(167, 147, 147);
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="TanksCanvas" width="200" height="400"></canvas>
+    <link rel="stylesheet" href="css/Tanks.css" />
+  </head>
+  <body>
+    <div class="screens">
+      <canvas id="TanksCanvas" width="200" height="400"></canvas>
+      <div class="screens-right">
+        <div class="score">
+          <p>2700</p>
+          <p>score #</p>
+        </div>
+        <div class="lives">
+          <canvas width="75px" height="30px"> </canvas>
+        </div>
+        <div class="speed-level">
+          <p>4 4</p>
+          <p>SPEED LEVEL</p>
+        </div>
+        <div class="animation"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="controls__config-game">
+        <button>+</button>
+        <button>+</button>
+        <button>+</button>
+        <button>+</button>
+      </div>
+      <div class="controls__play-buttons">
+        <div class="controls__play-buttons--directions">
+          <button class="btn-left" id="btn-left">left</button>
+          <button class="btn-up" id="btn-up">up</button>
+          <img
+            class="img-directions"
+            src="img/direction-icon-23-64x64.png"
+            alt=""
+          />
+          <button class="btn-right" id="btn-right">Right</button>
+          <button class="btn-down" id="btn-down">Down</button>
+        </div>
+        <div class="controls__play-buttons--enter">
+          <button class="btn-enter" id="btn-enter"></button>
+        </div>
+      </div>
+    </div>
+
     <script src="Js/Tanks.js"></script>
-</body>
+  </body>
 </html>
