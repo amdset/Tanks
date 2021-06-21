@@ -1,4 +1,14 @@
 var canvas = document.getElementById("TanksCanvas");
+var btn_left = document.getElementById("btn-left");
+var btn_up = document.getElementById("btn-up");
+var btn_right = document.getElementById("btn-right");
+var btn_down = document.getElementById("btn-down");
+var btn_enter = document.getElementById("btn-enter");
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 var Block = class {
     constructor(context, x, y, wh) {
         this.ctx = context;
@@ -24,9 +34,7 @@ var Block = class {
         this.ctx.closePath();
     }
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+
 
     /**
      * Se mueve el bloque hasta llegar a alguno de los limites del canvas
@@ -35,37 +43,37 @@ var Block = class {
      * @returns 
      */
     async moveBlock(tankDirection, pxMove) {
+        let cont = 0;
         while (this.EnLimite === false) {
-            await this.sleep(100);//Esperamos 200 ms antes de cada avance
+            if (cont > 0) {
+                await sleep(90);//Esperamos 200 ms antes de cada avance
+            }
             if (tankDirection == TankDirection.UP) {
                 if (this.y - pxMove < 0) {//Top wall
                     this.EnLimite = true;
-                    console.log("limite alcanzado top");
                 } else {
                     this.y -= pxMove;
                 }
             } else if (tankDirection == TankDirection.RIGHT) {
                 if (this.x + pxMove > canvas.width) {
                     this.EnLimite = true;
-                    console.log("limite alcanzado Right");
                 } else {
                     this.x += pxMove;
                 }
             } else if (tankDirection == TankDirection.DOWN) {
                 if (this.y + pxMove > canvas.height) {
                     this.EnLimite = true;
-                    console.log("limite alcanzado Down");
                 } else {
                     this.y += pxMove;
                 }
             } else if (tankDirection == TankDirection.LEFT) {
                 if (this.x - pxMove < 0) {
                     this.EnLimite = true;
-                    console.log("limite alcanzado Left");
                 } else {
                     this.x -= pxMove;
                 }
             }
+            cont += 1;
         }
     }
 
@@ -210,9 +218,58 @@ if (canvas) {
     var downPressed = false;
     var firedBulled = false;
     var bulletStart = null;
+    //mouse 
+    var mouseDownPressed = false;
 
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("keydown", keyDownHandler, false);
+
+    window.addEventListener('mouseup', e => {
+        if (mouseDownPressed === true) {
+            mouseDownPressed = false;
+        }
+        if(firedBulled === true){
+            firedBulled =false;
+        }
+    });
+
+    if (btn_left) {
+        btn_left.onmousedown = evt => {
+            if (evt.buttons == 1) {
+                mouseDownPressed = true;
+                goAsync(goLeft);
+            }
+        };
+    }
+
+    if (btn_up) {
+        btn_up.onmousedown = e => {
+            if (e.buttons === 1) {
+                mouseDownPressed = true;
+                goAsync(goUp);
+            }
+        };
+    }
+    if (btn_right) {
+        btn_right.onmousedown = e => {
+            mouseDownPressed = true;
+            goAsync(goRight);
+        };
+    }
+    if (btn_down) {
+        btn_down.onmousedown = e => {
+            mouseDownPressed = true;
+            goAsync(goDown);
+        };
+    }
+
+    if (btn_enter) {
+        //btn_enter.onclick = onclick_Btn_enter;
+        btn_enter.onmousedown = e=>{
+            firedBulled = true;
+            fireAsync(fire);
+        };
+    }
 
     function keyUpHandler(e) {
         if (e.key == "Right" || e.key == "ArrowRight") {
@@ -230,55 +287,96 @@ if (canvas) {
 
     function keyDownHandler(e) {
         if (e.key == "Up" || e.key == "ArrowUp") {
-            upPressed = true;
-            if (tankDirection != TankDirection.UP) {
-                tankDirection = TankDirection.UP;
-            } else {
-                if (initialPoint.y - move < 0) {//Top wall
-                    initialPoint.y = 0;
-                } else {
-                    initialPoint.y -= move;
-                }
-            }
+            goUp();
         }
         else if (e.key == "Right" || e.key == "ArrowRight") {
-            rightPressed = true;
-            if (tankDirection != TankDirection.RIGHT) {
-                tankDirection = TankDirection.RIGHT;
-            } else {//Ya está en posición de avanzar
-                if (initialPoint.x + move <= canvas.width - (move * 3)) { //Right wall
-                    initialPoint.x += move;
-                }
-            }
+            goRight();
         } else if (e.key == "Down" || e.key == "ArrowDown") {
-            downPressed = true;
-            if (tankDirection != TankDirection.DOWN) {
-                tankDirection = TankDirection.DOWN;
-            } else {
-                if (initialPoint.y + move <= canvas.height - (move * 3)) {// down wall
-                    initialPoint.y += move;
-                }
-            }
+            goDown();
         } else if (e.key == "Left" || e.key == "ArrowLeft") {
-            leftPressed = true;
-            if (tankDirection != TankDirection.LEFT) {
-                tankDirection = TankDirection.LEFT;
-            } else {
-                if (initialPoint.x - move >= 0) {//left wall
-                    initialPoint.x -= move;
-                }
-            }
+            goLeft();
         } else if (e.key == " " || e.code == "Space") {
-            firedBulled = true;
-            if (playerTank) {
-                playerTank.CreateFire();
-                /* for (var bullet of playerTank.lstBullets) {
-                     var limite = bullet.moveBlock(tankDirection, 5);
-                 }*/
+            fire();
+        }
+    }
+
+    function goUp() {
+        upPressed = true;
+        if (tankDirection != TankDirection.UP) {
+            tankDirection = TankDirection.UP;
+        } else {
+            if (initialPoint.y - move < 0) {//Top wall
+                initialPoint.y = 0;
+            } else {
+                initialPoint.y -= move;
             }
         }
     }
+    function goRight() {
+        rightPressed = true;
+        if (tankDirection != TankDirection.RIGHT) {
+            tankDirection = TankDirection.RIGHT;
+        } else {//Ya está en posición de avanzar
+            if (initialPoint.x + move <= canvas.width - (move * 3)) { //Right wall
+                initialPoint.x += move;
+            }
+        }
+    }
+    function goDown() {
+        downPressed = true;
+        if (tankDirection != TankDirection.DOWN) {
+            tankDirection = TankDirection.DOWN;
+        } else {
+            if (initialPoint.y + move <= canvas.height - (move * 3)) {// down wall
+                initialPoint.y += move;
+            }
+        }
+    }
+
+    /**
+     * Tomar función como base
+     * @param {*} fn 
+     */
+    async function goAsync(fn) {
+        fn();
+        await sleep(220);
+        while (mouseDownPressed) {
+            fn();
+            await sleep(45);
+        }
+    }
+
+    function goLeft() {
+        leftPressed = true;
+        if (tankDirection != TankDirection.LEFT) {
+            tankDirection = TankDirection.LEFT;
+        } else {
+            if (initialPoint.x - move >= 0) {//left wall
+                initialPoint.x -= move;
+            }
+        }
+    }
+
+    function fire() {
+        if (playerTank) {
+            playerTank.CreateFire();
+        }
+    }
+
+    async function fireAsync(fn){
+        await sleep(50);
+        fn();
+        await sleep(220);
+        while (firedBulled) {
+            fn();
+            await sleep(200);
+        }
+    }
+
+
 }
+
+
 
 
 function StartGame() {

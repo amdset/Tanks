@@ -1,0 +1,99 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+canvas {
+  background: rgb(166, 167, 214);
+}
+
+.screens {
+  display: flex;
+  justify-content: center;
+}
+
+.screens-right {
+  outline: 1px solid magenta;
+  width: 75px;
+  margin-left: 1px;
+}
+
+.controls {
+  outline: 1px solid magenta;
+  display: flex;
+  flex-direction: column;
+}
+
+.controls button {
+  background: yellow;
+}
+
+.controls__config-game {
+  display: flex;
+  justify-content: center;
+}
+
+.controls__config-game button {
+  width: 30px;
+  height: 30px;
+  border-radius: 25px;
+}
+
+.controls__play-buttons {
+  outline: 1px solid magenta;
+  display: flex;
+  justify-content: center;
+}
+
+.controls__play-buttons--directions {
+  /*outline: 1px solid yellow;*/
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.btn-left {
+  grid-column: 1/2;
+  grid-row: 2/3;
+}
+
+.btn-right {
+  grid-column: 3/4;
+  grid-row: 2/3;
+}
+
+.btn-up {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+
+.btn-down {
+  grid-column: 2/3;
+  grid-row: 3/4;
+}
+
+.img-directions {
+  grid-column: 2/3;
+  grid-row: 2/3;
+}
+
+.controls__play-buttons--directions button {
+  border-radius: 20px;
+  height: 35px;
+  width: 35px;
+}
+.controls__play-buttons--directions img {
+  width: 30px;
+  height: 30px;
+}
+
+.controls__play-buttons--enter {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
+.btn-enter {
+  height: 45px;
+  width: 45px;
+  border-radius: 25px;
+}
