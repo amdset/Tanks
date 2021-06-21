@@ -221,6 +221,7 @@ if (canvas) {
     //mouse 
     var mouseDownPressed = false;
 
+
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("keydown", keyDownHandler, false);
 
@@ -228,10 +229,12 @@ if (canvas) {
         if (mouseDownPressed === true) {
             mouseDownPressed = false;
         }
-        if(firedBulled === true){
-            firedBulled =false;
+        if (firedBulled === true) {
+            firedBulled = false;
         }
     });
+
+    window.addEventListener('touchend', e => { mouseDownPressed = false; }, false);
 
     if (btn_left) {
         btn_left.onmousedown = evt => {
@@ -240,6 +243,10 @@ if (canvas) {
                 goAsync(goLeft);
             }
         };
+        btn_left.addEventListener('touchstart', e => {
+            mouseDownPressed = true;
+            goAsync(goLeft);
+        }, false);
     }
 
     if (btn_up) {
@@ -265,7 +272,7 @@ if (canvas) {
 
     if (btn_enter) {
         //btn_enter.onclick = onclick_Btn_enter;
-        btn_enter.onmousedown = e=>{
+        btn_enter.onmousedown = e => {
             firedBulled = true;
             fireAsync(fire);
         };
@@ -363,7 +370,7 @@ if (canvas) {
         }
     }
 
-    async function fireAsync(fn){
+    async function fireAsync(fn) {
         await sleep(50);
         fn();
         await sleep(220);
