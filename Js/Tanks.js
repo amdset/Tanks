@@ -234,7 +234,7 @@ if (canvas) {
         }
     });
 
-    window.addEventListener('touchend', e => { mouseDownPressed = false; }, false);
+    window.addEventListener('touchend', e => { mouseDownPressed = false; firedBulled =false; }, false);
 
     if (btn_left) {
         btn_left.onmousedown = evt => {
@@ -244,6 +244,7 @@ if (canvas) {
             }
         };
         btn_left.addEventListener('touchstart', e => {
+            e.preventDefault();
             mouseDownPressed = true;
             goAsync(goLeft);
         }, false);
@@ -256,26 +257,45 @@ if (canvas) {
                 goAsync(goUp);
             }
         };
+        btn_up.addEventListener('touchstart', e => {
+            e.preventDefault();
+            mouseDownPressed = true;
+            goAsync(goUp);
+        }, false);
     }
     if (btn_right) {
         btn_right.onmousedown = e => {
             mouseDownPressed = true;
             goAsync(goRight);
         };
+        btn_right.addEventListener('touchstart', e => {
+            e.preventDefault();
+            mouseDownPressed = true;
+            goAsync(goRight);
+        }, false);
     }
     if (btn_down) {
         btn_down.onmousedown = e => {
             mouseDownPressed = true;
             goAsync(goDown);
         };
+        btn_down.addEventListener('touchstart', e => {
+            e.preventDefault();
+            mouseDownPressed = true;
+            goAsync(goDown);
+        }, false);
     }
 
     if (btn_enter) {
-        //btn_enter.onclick = onclick_Btn_enter;
         btn_enter.onmousedown = e => {
             firedBulled = true;
             fireAsync(fire);
         };
+        btn_enter.addEventListener('touchstart', e => {
+            e.preventDefault();
+            firedBulled = true;
+            fireAsync(fire);
+        }, false);
     }
 
     function keyUpHandler(e) {
@@ -383,10 +403,11 @@ if (canvas) {
 
 }
 
+let lastRenderTime = 0;
+const speed = 2;
 
 
-
-function StartGame() {
+function StartGame(currentTime) {
     this.ctx.clearRect(0, 0, canvas.width, canvas.height);
     initialPoint.TankDirection = tankDirection;
     playerTank.moveTank(initialPoint);
