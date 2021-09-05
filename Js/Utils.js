@@ -21,4 +21,8 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export { TankDirection, Point, sleep };
+function getRamdomNum(maxNum = 6) {
+    return Math.floor(Math.random() * maxNum);
+}
+
+export { TankDirection, Point, sleep, getRamdomNum };

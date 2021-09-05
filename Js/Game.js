@@ -22,87 +22,100 @@ if (canvas) {
     var hive = new Hive(NoEnemies, ctx);
 
     var rightPressed = false;
-    var leftPressed = false;
+    window.leftPressed = false;
     var upPressed = false;
     var downPressed = false;
-    var firedBulled = false;
+    var firingdBulled = false;
+    var lastTimeEventFire = undefined;
     var bulletStart = null;
     //mouse and touch DownPressed 
-    var mouseDownPressed = false;
-
+    var KeyOrTouch_DownPressed = false;
 
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("keydown", keyDownHandler, false);
 
     window.addEventListener('mouseup', e => {
-        if (mouseDownPressed === true) {
-            mouseDownPressed = false;
-        }
-        if (firedBulled === true) {
-            firedBulled = false;
+        if (firingdBulled === true) {
+            firingdBulled = false;
+            lastTimeEventFire = undefined;
         }
     });
 
-    window.addEventListener('touchend', e => { mouseDownPressed = false; firedBulled = false; }, false);
+    window.addEventListener('touchend', e => {
+        KeyOrTouch_DownPressed = false;
+        firingdBulled = false;
+        lastTimeEventFire = undefined;
+    }, false);
 
     if (btn_left) {
         btn_left.onmousedown = evt => {
             if (evt.buttons == 1) {
-                mouseDownPressed = true;
-                goAsync(goLeft);
+                leftPressed = true;
             }
-        };
+        }
+        btn_left.onmouseup = e => leftPressed = false;
+
         btn_left.addEventListener('touchstart', e => {
             e.preventDefault();
-            mouseDownPressed = true;
-            goAsync(goLeft);
+            KeyOrTouch_DownPressed = true;
+            goAsync(goLeft, KeyOrTouch_DownPressed);
         }, false);
     }
 
     if (btn_up) {
         btn_up.onmousedown = e => {
             if (e.buttons === 1) {
-                mouseDownPressed = true;
-                goAsync(goUp);
+                upPressed = true;
             }
-        };
+        }
+        btn_up.onmouseup = e => upPressed = false;
+
         btn_up.addEventListener('touchstart', e => {
             e.preventDefault();
-            mouseDownPressed = true;
-            goAsync(goUp);
+            KeyOrTouch_DownPressed = true;
+            goAsync(goUp, KeyOrTouch_DownPressed);
         }, false);
     }
     if (btn_right) {
         btn_right.onmousedown = e => {
-            mouseDownPressed = true;
-            goAsync(goRight);
-        };
+            rightPressed = true;
+        }
+        btn_right.onmouseup = () => rightPressed = false;
+
         btn_right.addEventListener('touchstart', e => {
             e.preventDefault();
-            mouseDownPressed = true;
-            goAsync(goRight);
+            KeyOrTouch_DownPressed = true;
+            goAsync(goRight, KeyOrTouch_DownPressed);
         }, false);
     }
     if (btn_down) {
         btn_down.onmousedown = e => {
-            mouseDownPressed = true;
-            goAsync(goDown);
-        };
+            downPressed = true;
+        }
+        btn_down.onmouseup = () => downPressed = false;
+
         btn_down.addEventListener('touchstart', e => {
             e.preventDefault();
-            mouseDownPressed = true;
-            goAsync(goDown);
+            KeyOrTouch_DownPressed = true;
+            goAsync(goDown, KeyOrTouch_DownPressed);
         }, false);
     }
 
     if (btn_enter) {
         btn_enter.onmousedown = e => {
-            firedBulled = true;
-            fireAsync(fire);
-        };
+            firingdBulled = true;
+            if (!lastTimeEventFire) {
+                lastTimeEventFire = new Date();
+            }
+        }
+        btn_enter.onmouseup = e => {
+            firingdBulled = false;
+            lastTimeEventFire = undefined;
+            fire();//last fire
+        }
         btn_enter.addEventListener('touchstart', e => {
             e.preventDefault();
-            firedBulled = true;
+            firingdBulled = true;
             fireAsync(fire);
         }, false);
     }
@@ -117,7 +130,9 @@ if (canvas) {
         } else if (e.key == "Down" || e.key == "ArrowDown") {
             downPressed = false;
         } else if (e.key == " " || e.code == "Space") {
-            firedBulled = false;
+            firingdBulled = false;
+            lastTimeEventFire = undefined;
+            fire();//last fire
         }
     }
 
@@ -132,12 +147,14 @@ if (canvas) {
         } else if (e.key == "Left" || e.key == "ArrowLeft") {
             goLeft();
         } else if (e.key == " " || e.code == "Space") {
-            fire();
+            firingdBulled = true;
+            if (!lastTimeEventFire) {
+                lastTimeEventFire = new Date();
+            }
         }
     }
 
     function goUp() {
-        upPressed = true;
         if (tankDirection != TankDirection.UP) {
             tankDirection = TankDirection.UP;
         } else {
@@ -149,7 +166,6 @@ if (canvas) {
         }
     }
     function goRight() {
-        rightPressed = true;
         if (tankDirection != TankDirection.RIGHT) {
             tankDirection = TankDirection.RIGHT;
         } else {//Ya está en posición de avanzar
@@ -159,7 +175,6 @@ if (canvas) {
         }
     }
     function goDown() {
-        downPressed = true;
         if (tankDirection != TankDirection.DOWN) {
             tankDirection = TankDirection.DOWN;
         } else {
@@ -176,14 +191,14 @@ if (canvas) {
     async function goAsync(fn) {
         fn();
         await sleep(220);
-        while (mouseDownPressed) {
+        while (leftPressed || rightPressed || upPressed || downPressed || KeyOrTouch_DownPressed) {
             fn();
-            await sleep(45);
+            await sleep(30);
         }
+        return true;
     }
 
     function goLeft() {
-        leftPressed = true;
         if (tankDirection != TankDirection.LEFT) {
             tankDirection = TankDirection.LEFT;
         } else {
@@ -199,21 +214,66 @@ if (canvas) {
         }
     }
 
-    async function fireAsync(fn) {
-        await sleep(50);
+    async function fireAsync(fn, sleetTime, singleFire) {
+
+        if (!sleetTime) {
+            sleetTime = 50;
+        }
+        await sleep(sleetTime);
         fn();
-        await sleep(220);
-        while (firedBulled) {
-            fn();
-            await sleep(200);
+        if (!singleFire) {
+            await sleep(220);
+            while (firingdBulled) {
+                fn();
+                await sleep(200);
+            }
         }
     }
 
-    let lastRenderTime = 0;
-    const speed = 2;
-
+    let lastFireTime = undefined;
+    var OneSecond = 1000;
+    const speedFire = 6.5;
+    let now = new Date();
+    var moveFunction = undefined;
 
     function StartGame() {
+        console.log(firingdBulled);
+        if (firingdBulled) {
+            if (!lastFireTime) {
+                lastFireTime = new Date();
+            } else {
+                now = new Date();
+                const diference = Math.abs(now - lastFireTime);
+                const differenceEvent = Math.abs(lastTimeEventFire - now) - 10;
+
+                if (diference >= (OneSecond / speedFire)) {//Solo cuando sea mayor a la velocidad configurada, ejecutamos algo
+                    lastFireTime = undefined;
+                    if (differenceEvent > (OneSecond / speedFire)) {
+                        if (firingdBulled) {
+                            fire();
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (leftPressed || upPressed || rightPressed || downPressed) {
+            if (!moveFunction) {
+                moveFunction = 1;
+                if (leftPressed) {
+                    goAsync(goLeft).then(res => moveFunction = undefined);
+                } else if (upPressed) {
+                    goAsync(goUp).then(res => moveFunction = undefined);
+                } else if (rightPressed) {
+                    goAsync(goRight).then(res => moveFunction = undefined);
+                } else if (downPressed) {
+                    goAsync(goDown).then(res => moveFunction = undefined);;
+                }
+            }
+        }
+
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         initialPoint.TankDirection = tankDirection;
         playerTank.moveTank(initialPoint);
@@ -225,17 +285,6 @@ if (canvas) {
         }
 
         playerTank.lstBullets = playerTank.lstBullets.filter(b => b.EnLimite === false);
-
-
-        if (upPressed) {
-
-        } else if (rightPressed) {
-
-        } else if (downPressed) {
-
-        } else if (leftPressed) {
-
-        }
 
         requestAnimationFrame(StartGame);
     }

@@ -13,8 +13,6 @@ var Tank = class {
         this.lstBullets = [];
     }
 
-    //DrawBlock()
-
     createTankBlocks() {
         var blocks = [];
         var dx = this.point.x;
@@ -88,9 +86,7 @@ var Tank = class {
         var newBullet = new Block(this.ctx, bp.x, bp.y, this.move);
         this.lstBullets.push(newBullet);
 
-        newBullet.moveBlock(this.point.TankDirection, this.move)
-            .then(result => console.log(result))
-            .catch(error => console.error(error));;
+        newBullet.moveBlock(this.point.TankDirection, this.move);
     }
 
     getBulletPoint() {

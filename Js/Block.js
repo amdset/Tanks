@@ -36,7 +36,7 @@ var Block = class {
         let cont = 0;
         while (this.EnLimite === false) {
             if (cont > 0) {
-                await sleep(90);//Esperamos 200 ms antes de cada avance
+                await sleep(60);//Esperamos x ms antes de cada avance
             }
             if (tankDirection == TankDirection.UP) {
                 if (this.y - pxMove < 0) {//Top wall

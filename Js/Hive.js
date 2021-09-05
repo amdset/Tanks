@@ -6,9 +6,20 @@ var Hive = class {
         this.noEnemies = noEnemies;
         this.ctx = ctx;
         this.lstEnemies = [];
+        this.createInitialTroop(ctx);
+    }
+
+    createInitialTroop(ctx) {
         for (let index = 0; index < this.noEnemies; index++) {
-            this.lstEnemies[index] = new Tank(ctx, false, this.getRandomLocation());
+            const indexLoc = Math.floor(Math.random() * 6);
+            this.lstEnemies[index] = this.createHunter(ctx, indexLoc);
         }
+    }
+
+    createHunter(context, indexLoc) {
+        const point = this.getRandomPoint(indexLoc);
+        let hunter = new Tank(context, false, point);
+        return hunter;
     }
 
     startCreation() {
@@ -22,16 +33,16 @@ var Hive = class {
 
     }
 
-    getRandomLocation() {
-        const { x, y } = this.getAvailableLocation();
-        const point = new Point(x, y, this.getRandomDirection())
+    getRandomPoint(indexLoc) {
+        const { x, y } = this.getAvailableLocation(indexLoc);
+        const point = new Point(x, y, this.getRandomDirection());
         return point;
     }
 
-    getAvailableLocation() {
+    getAvailableLocation(index) {
         const sizeWidth = this.ctx.canvas.clientWidth;
         const sizeHeight = this.ctx.canvas.clientHeight;
-        const index = Math.floor(Math.random() * 6);
+
         const lstAngars = [
             { x: 0, y: 0 },//Top left
             { x: sizeWidth - 30, y: 0 },//top right
@@ -39,7 +50,7 @@ var Hive = class {
             { x: sizeWidth - 30, y: sizeHeight / 2 },//medium right
             { x: 0, y: sizeHeight - 30 },//Bottom left
             { x: sizeWidth - 30, y: sizeHeight - 30 } //Bottom right
-        ];
+        ]; //Six location available
 
         return lstAngars[index];
     }

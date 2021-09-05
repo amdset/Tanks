@@ -75,6 +75,8 @@ canvas {
   grid-column: 2/3;
   grid-row: 2/3;
   margin: 0 auto;
+  pointer-events: none;
+  user-select: none;
 }
 
 .controls__play-buttons--directions button {
